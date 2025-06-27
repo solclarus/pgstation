@@ -21,8 +21,8 @@ export default async function PokemonDetail({ params }: Props) {
 					<h2 className="font-bold text-lg">{pokemon.name}</h2>
 				</div>
 				<div className="grid grid-cols-2 gap-2">
-					<ImageCard id={pokemon.id} />
-					<ImageCard id={pokemon.id} />
+					<ImageCard id={pokemon.id} isShiny={false} />
+					<ImageCard id={pokemon.id} isShiny />
 				</div>
 
 				{/* 基本ステータスカード */}
