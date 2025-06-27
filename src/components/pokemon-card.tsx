@@ -10,7 +10,10 @@ import {
 } from "@ui/tooltip";
 import Link from "next/link";
 
-export const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
+export const PokemonCard = ({
+	isShiny,
+	pokemon,
+}: { isShiny: boolean; pokemon: Pokemon }) => {
 	if (!pokemon) {
 		return <div className="h-full w-full" />;
 	}
@@ -20,7 +23,7 @@ export const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
 			<Tooltip>
 				<TooltipTrigger>
 					<Link href={`pokemon/${pokemon.id}`}>
-						<ImageCard id={pokemon.id} />
+						<ImageCard id={pokemon.id} isShiny={isShiny} />
 					</Link>
 				</TooltipTrigger>
 				<TooltipContent>

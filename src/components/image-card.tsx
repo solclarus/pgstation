@@ -5,13 +5,16 @@ import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
-export const ImageCard = ({ id }: { id: string }) => {
+export const ImageCard = ({
+	id,
+	isShiny,
+}: { id: string; isShiny: boolean }) => {
 	if (!id) return null;
 
 	const supabase = createClient();
 	const { data } = supabase.storage
 		.from("sprites")
-		.getPublicUrl(`pokemons/normal/${id}.png`);
+		.getPublicUrl(`pokemons/${isShiny ? "shiny" : "normal"}/${id}.png`);
 
 	const [imgStatus, setImgStatus] = useState<"loading" | "error" | "loaded">(
 		"loading",
