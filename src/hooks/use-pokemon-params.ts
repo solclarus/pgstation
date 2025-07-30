@@ -4,8 +4,10 @@ import {
 	type Option,
 	classFilterOptionSchema,
 	formFilterOptionSchema,
+	implementedStatusOptionSchema,
 	pokemonTypeFilterOptionSchema,
 	regionFilterOptionSchema,
+	shinyImplementedStatusOptionSchema,
 } from "@/lib/control-panel/schema";
 import {
 	validateMultiParams,
@@ -13,6 +15,17 @@ import {
 } from "@/lib/control-panel/validator";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
+
+// 型安全な検証関数
+function validateImplementedStatus(value: string | null) {
+	const result = implementedStatusOptionSchema.safeParse(value);
+	return result.success ? result.data : "all";
+}
+
+function validateShinyImplementedStatus(value: string | null) {
+	const result = shinyImplementedStatusOptionSchema.safeParse(value);
+	return result.success ? result.data : "all";
+}
 
 export function usePokemonParams() {
 	const searchParams = useSearchParams();
@@ -27,16 +40,12 @@ export function usePokemonParams() {
 				classFilterOptionSchema,
 			),
 			form: validateMultiParams(searchParams, "form", formFilterOptionSchema),
-			implementedStatus:
-				(searchParams.get("implementedStatus") as
-					| "all"
-					| "implemented"
-					| "not-implemented") || "all",
-			shinyImplementedStatus:
-				(searchParams.get("shinyImplementedStatus") as
-					| "all"
-					| "shiny-implemented"
-					| "shiny-not-implemented") || "all",
+			implementedStatus: validateImplementedStatus(
+				searchParams.get("implementedStatus"),
+			),
+			shinyImplementedStatus: validateShinyImplementedStatus(
+				searchParams.get("shinyImplementedStatus"),
+			),
 			pokemonType: validateMultiParams(
 				searchParams,
 				"pokemonType",

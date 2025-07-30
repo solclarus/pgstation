@@ -1,17 +1,17 @@
 "use client";
 
 import { PokemonCard } from "@/components/pokemon-card";
+import { ShinyToggleButton } from "@/components/shiny-toggle-button";
 import { usePokemonParams } from "@/hooks/use-pokemon-params";
+import { useShinyToggle } from "@/hooks/use-shiny-toggle";
 import { processPokemons } from "@/lib/control-panel/process";
 import type { Pokemon } from "@/types/pokemon";
-import { Button } from "@ui/button";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export function PokemonHistoryList({ pokemons }: { pokemons: Pokemon[] }) {
 	const { options } = usePokemonParams();
 
-	// 通常/色違い切り替え
-	const [isShiny, setIsShiny] = useState(false);
+	const { isShiny, toggleShiny } = useShinyToggle();
 
 	const processedPokemon = useMemo(
 		() => processPokemons(pokemons, options),
@@ -51,14 +51,14 @@ export function PokemonHistoryList({ pokemons }: { pokemons: Pokemon[] }) {
 					{processedPokemon.length}匹のポケモンが見つかりました
 				</p>
 			</div>
-			<div className="mb-4 flex gap-2">
-				<Button disabled={!isShiny} onClick={() => setIsShiny(false)}>
-					通常実装履歴
-				</Button>
-				<Button disabled={isShiny} onClick={() => setIsShiny(true)}>
-					色違い実装履歴
-				</Button>
-			</div>
+			<ShinyToggleButton
+				isShiny={isShiny}
+				onToggle={toggleShiny}
+				labels={{
+					normal: "通常実装履歴",
+					shiny: "色違い実装履歴",
+				}}
+			/>
 			{sortedDates.map((date) => (
 				<section key={date}>
 					<h2 className="mb-2 font-bold text-base text-muted-foreground">
