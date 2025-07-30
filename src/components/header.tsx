@@ -1,10 +1,14 @@
+import { SearchBox } from "@/components/search-box";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { config } from "@/config/site";
-import { FootprintsIcon } from "lucide-react";
+import { getAllPokemon } from "@/lib/pokemon";
+import { FootprintsIcon, ListIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export function Header() {
+export async function Header() {
+	const pokemons = await getAllPokemon();
+
 	return (
 		<header className="fixed inset-shadow-lg top-4 right-4 left-4 z-50 flex h-14 items-center justify-between rounded-md border bg-card/10 px-4 shadow-sm backdrop-blur-lg">
 			<div className="flex items-center">
@@ -21,10 +25,16 @@ export function Header() {
 					>
 						<FootprintsIcon size={16} />
 					</Link>
+					<Link
+						href={"/table"}
+						className="text-muted-foreground hover:text-primary"
+					>
+						<ListIcon size={16} />
+					</Link>
 				</nav>
 			</div>
-			<div className="flex items-center gap-4">
-				{/* <SearchBox /> */}
+			<div className="flex items-center gap-2">
+				<SearchBox pokemons={pokemons} />
 				<ThemeSwitcher />
 			</div>
 		</header>

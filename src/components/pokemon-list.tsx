@@ -1,17 +1,17 @@
 "use client";
 
 import { PokemonCard } from "@/components/pokemon-card";
+import { ShinyToggleButton } from "@/components/shiny-toggle-button";
 import { usePokemonParams } from "@/hooks/use-pokemon-params";
+import { useShinyToggle } from "@/hooks/use-shiny-toggle";
 import { processPokemons } from "@/lib/control-panel/process";
 import type { Pokemon } from "@/types/pokemon";
-import { Button } from "@ui/button";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export function PokemonList({ pokemons }: { pokemons: Pokemon[] }) {
 	const { options } = usePokemonParams();
 
-	// 通常/色違い切り替え
-	const [isShiny, setIsShiny] = useState(false);
+	const { isShiny, toggleShiny } = useShinyToggle();
 
 	const processedPokemon = useMemo(
 		() => processPokemons(pokemons, options),
@@ -28,14 +28,7 @@ export function PokemonList({ pokemons }: { pokemons: Pokemon[] }) {
 					{processedPokemon.length}匹のポケモンが見つかりました
 				</p>
 			</div>
-			<div className="mb-4 flex gap-2">
-				<Button disabled={!isShiny} onClick={() => setIsShiny(false)}>
-					通常
-				</Button>
-				<Button disabled={isShiny} onClick={() => setIsShiny(true)}>
-					色違い
-				</Button>
-			</div>
+			<ShinyToggleButton isShiny={isShiny} onToggle={toggleShiny} />
 			{processedPokemon.length === 0 ? (
 				<div className="py-12 text-center">
 					<p className="text-lg text-muted-foreground">
