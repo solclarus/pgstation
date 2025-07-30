@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import { PokemonList } from "@/components/pokemon-list";
+import { PaginatedPokemonList } from "@/components/paginated-pokemon-list";
 import { getAllPokemon } from "@/lib/pokemon";
 import { Suspense } from "react";
 
@@ -8,7 +8,7 @@ export default async function PokemonPage() {
 
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
-			<PokemonList pokemons={pokemons} />
+			<PaginatedPokemonList pokemons={pokemons} />
 		</Suspense>
 	);
 }
