@@ -12,16 +12,6 @@ export type Pokemon = {
 	pokemon_class: PokemonClass;
 	pokemon_form: PokemonForm;
 	pokemon_types: PokemonType[];
-	// name: {
-	// 	en: string;
-	// 	ja: string;
-	// };
-	// height: number;
-	// weight: number;
-	// sprites: {
-	// 	default: string;
-	// 	shiny: string;
-	// };
 };
 
 export type PokemonTypeMap = {
@@ -80,3 +70,16 @@ export type PokemonClass = z.infer<typeof pokemonClassSchema>;
 export type PokemonForm = z.infer<typeof pokemonFormSchema>;
 export type PokemonType = z.infer<typeof pokemonTypeSchema>;
 export type Region = z.infer<typeof regionSchema>;
+
+export interface PokemonApiResponse {
+	height: number;
+	weight: number;
+	stats: Array<{
+		base_stat: number;
+		effort: number;
+		stat: {
+			name: string;
+			url: string;
+		};
+	}>;
+}
