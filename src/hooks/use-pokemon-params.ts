@@ -72,8 +72,16 @@ export function usePokemonParams() {
 					params.set(key, value.join(","));
 				}
 			}
-			params.set("implementedStatus", options.implementedStatus);
-			params.set("shinyImplementedStatus", options.shinyImplementedStatus);
+			if (options.implementedStatus !== "all") {
+				params.set("implementedStatus", options.implementedStatus);
+			} else {
+				params.delete("implementedStatus");
+			}
+			if (options.shinyImplementedStatus !== "all") {
+				params.set("shinyImplementedStatus", options.shinyImplementedStatus);
+			} else {
+				params.delete("shinyImplementedStatus");
+			}
 			if (options.sort && options.sort !== "pokedex-number-asc") {
 				params.set("sort", options.sort);
 			} else {
