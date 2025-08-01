@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+import { PokemonTableSkeleton } from "@/components/skeletons/pokemon-table-skeleton";
 import { getAllPokemon } from "@/lib/pokemon";
 import Image from "next/image";
 import { Suspense } from "react";
@@ -7,7 +8,7 @@ export default async function Table() {
 	const pokemons = await getAllPokemon();
 
 	return (
-		<Suspense fallback={<div>Loading...</div>}>
+		<Suspense fallback={<PokemonTableSkeleton />}>
 			<div className="overflow-x-auto">
 				<table className="min-w-full border bg-card text-sm">
 					<thead>

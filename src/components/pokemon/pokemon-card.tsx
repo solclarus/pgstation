@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageCard } from "@/components/image-card";
+import { ImageCard } from "@/components/pokemon/image-card";
 import type { Pokemon } from "@/types/pokemon";
 import {
 	Tooltip,
@@ -10,10 +10,17 @@ import {
 } from "@ui/tooltip";
 import Link from "next/link";
 
+interface PokemonCardProps {
+	isShiny: boolean;
+	pokemon: Pokemon;
+	priority?: boolean;
+}
+
 export const PokemonCard = ({
 	isShiny,
 	pokemon,
-}: { isShiny: boolean; pokemon: Pokemon }) => {
+	priority = false,
+}: PokemonCardProps) => {
 	if (!pokemon) {
 		return <div className="h-full w-full" />;
 	}
@@ -23,7 +30,7 @@ export const PokemonCard = ({
 			<Tooltip>
 				<TooltipTrigger>
 					<Link href={`pokemon/${pokemon.id}`}>
-						<ImageCard id={pokemon.id} isShiny={isShiny} />
+						<ImageCard id={pokemon.id} isShiny={isShiny} priority={priority} />
 					</Link>
 				</TooltipTrigger>
 				<TooltipContent>

@@ -1,8 +1,8 @@
-import { SearchBox } from "@/components/search-box";
+import { SearchBox } from "@/components/layout/search-box";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 import { config } from "@/config/site";
 import { getAllPokemon } from "@/lib/pokemon";
-import { FootprintsIcon, ListIcon } from "lucide-react";
+import { BarChart3, FootprintsIcon, ListIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -30,6 +30,12 @@ export async function Header() {
 						className="text-muted-foreground hover:text-primary"
 					>
 						<ListIcon size={16} />
+					</Link>
+					<Link
+						href={"/stats"}
+						className="text-muted-foreground hover:text-primary"
+					>
+						<BarChart3 size={16} />
 					</Link>
 				</nav>
 			</div>

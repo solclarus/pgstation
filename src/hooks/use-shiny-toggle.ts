@@ -1,11 +1,2 @@
-import { useCallback, useState } from "react";
-
-export function useShinyToggle(initialValue = false) {
-	const [isShiny, setIsShiny] = useState(initialValue);
-
-	const toggleShiny = useCallback((shiny: boolean) => {
-		setIsShiny(shiny);
-	}, []);
-
-	return { isShiny, toggleShiny };
-}
+// このファイルは非推奨です。代わりに src/contexts/shiny-context.tsx を使用してください。
+export { useShinyToggle } from "@/contexts/shiny-context";

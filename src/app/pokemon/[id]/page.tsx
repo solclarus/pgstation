@@ -1,12 +1,93 @@
-import { ImageCard } from "@/components/image-card";
+import { ImageCard } from "@/components/pokemon/image-card";
+import { PokemonDetailSkeleton } from "@/components/skeletons/pokemon-detail-skeleton";
 import { getPokemon } from "@/lib/pokemon";
 import type { PokemonApiResponse } from "@/types/pokemon";
+import { Badge } from "@ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
+import { Progress } from "@ui/progress";
+import { Separator } from "@ui/separator";
+import {
+	Calendar,
+	Crown,
+	Info,
+	Palette,
+	Ruler,
+	Sparkles,
+	Weight,
+} from "lucide-react";
+import { Suspense } from "react";
 
 type Props = {
 	params: Promise<{ id: string }>;
 };
 
-export default async function PokemonDetail({ params }: Props) {
+const typeColorMap: Record<string, string> = {
+	normal: "bg-gray-400",
+	fire: "bg-red-500",
+	water: "bg-blue-500",
+	electric: "bg-yellow-400",
+	grass: "bg-green-500",
+	ice: "bg-blue-200",
+	fighting: "bg-red-700",
+	poison: "bg-purple-500",
+	ground: "bg-yellow-600",
+	flying: "bg-indigo-400",
+	psychic: "bg-pink-500",
+	bug: "bg-green-400",
+	rock: "bg-yellow-800",
+	ghost: "bg-purple-700",
+	dragon: "bg-indigo-700",
+	dark: "bg-gray-800",
+	steel: "bg-gray-500",
+	fairy: "bg-pink-300",
+};
+
+const classNameMap: Record<string, { label: string; color: string }> = {
+	normal: {
+		label: "通常",
+		color: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
+	},
+	legendary: {
+		label: "伝説",
+		color:
+			"bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+	},
+	mythical: {
+		label: "幻",
+		color:
+			"bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+	},
+	ub: {
+		label: "UB",
+		color:
+			"bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
+	},
+};
+
+const regionNameMap: Record<string, string> = {
+	kanto: "カントー",
+	johto: "ジョウト",
+	hoenn: "ホウエン",
+	sinnoh: "シンオウ",
+	unova: "イッシュ",
+	kalos: "カロス",
+	alola: "アローラ",
+	galar: "ガラル",
+	hisui: "ヒスイ",
+	paldea: "パルデア",
+	unknown: "不明",
+};
+
+const statNameMap: Record<string, string> = {
+	hp: "HP",
+	attack: "攻撃",
+	defense: "防御",
+	"special-attack": "特攻",
+	"special-defense": "特防",
+	speed: "素早さ",
+};
+
+async function PokemonDetailContent({ params }: Props) {
 	const { id } = await params;
 	const pokemon = await getPokemon(id);
 	if (!pokemon) {
@@ -17,18 +98,194 @@ export default async function PokemonDetail({ params }: Props) {
 	);
 	const { height, weight, stats }: PokemonApiResponse = await response.json();
 
+	const totalStats = stats.reduce((sum, stat) => sum + stat.base_stat, 0);
+
 	return (
-		<div className="mx-auto flex max-w-lg flex-col items-center justify-center gap-4">
-			<div className="grid grid-cols-1 gap-2">
-				<div className="flex items-center justify-between rounded-md border bg-card px-6 py-4 shadow-sm">
-					<p className="text-sm">No.{pokemon.pokedex_number}</p>
-					<h2 className="font-bold text-lg">{pokemon.name}</h2>
-				</div>
-				<div className="grid grid-cols-2 gap-2">
-					<ImageCard id={pokemon.id} isShiny={false} />
-					<ImageCard id={pokemon.id} isShiny />
-				</div>
+		<div className="mx-auto max-w-4xl space-y-6 p-4">
+			{/* ヘッダーセクション */}
+			<Card>
+				<CardHeader>
+					<div className="flex items-center justify-between">
+						<div className="flex items-center gap-3">
+							<Badge variant="outline" className="text-sm">
+								No.{pokemon.pokedex_number}
+							</Badge>
+							<CardTitle className="font-bold text-2xl">
+								{pokemon.name}
+							</CardTitle>
+						</div>
+						<Badge className={classNameMap[pokemon.pokemon_class]?.color}>
+							<Crown className="mr-1 h-3 w-3" />
+							{classNameMap[pokemon.pokemon_class]?.label}
+						</Badge>
+					</div>
+				</CardHeader>
+			</Card>
+
+			<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+				{/* 画像セクション */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<Palette className="h-5 w-5" />
+							ポケモン画像
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="grid grid-cols-2 gap-4">
+							<div className="space-y-2">
+								<p className="text-center font-medium text-muted-foreground text-sm">
+									通常
+								</p>
+								<ImageCard id={pokemon.id} isShiny={false} priority />
+							</div>
+							<div className="space-y-2">
+								<p className="text-center font-medium text-muted-foreground text-sm">
+									色違い
+								</p>
+								<ImageCard id={pokemon.id} isShiny priority />
+							</div>
+						</div>
+					</CardContent>
+				</Card>
+
+				{/* 基本情報セクション */}
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center gap-2">
+							<Info className="h-5 w-5" />
+							基本情報
+						</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-4">
+						<div className="grid grid-cols-2 gap-4">
+							<div className="flex items-center gap-2">
+								<Ruler className="h-4 w-4 text-muted-foreground" />
+								<span className="text-sm">身長:</span>
+								<span className="font-medium">{(height / 10).toFixed(1)}m</span>
+							</div>
+							<div className="flex items-center gap-2">
+								<Weight className="h-4 w-4 text-muted-foreground" />
+								<span className="text-sm">体重:</span>
+								<span className="font-medium">
+									{(weight / 10).toFixed(1)}kg
+								</span>
+							</div>
+						</div>
+
+						<Separator />
+
+						<div className="space-y-2">
+							<p className="font-medium text-sm">地方</p>
+							<Badge variant="secondary">
+								{regionNameMap[pokemon.region] || pokemon.region}
+							</Badge>
+						</div>
+
+						<div className="space-y-2">
+							<p className="font-medium text-sm">タイプ</p>
+							<div className="flex gap-2">
+								{pokemon.pokemon_types.map((type) => (
+									<Badge
+										key={type}
+										className={`text-white ${typeColorMap[type] || "bg-gray-400"}`}
+									>
+										{type.toUpperCase()}
+									</Badge>
+								))}
+							</div>
+						</div>
+					</CardContent>
+				</Card>
 			</div>
+
+			{/* 実装情報セクション */}
+			<Card>
+				<CardHeader>
+					<CardTitle className="flex items-center gap-2">
+						<Calendar className="h-5 w-5" />
+						実装情報
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+						<div className="space-y-2">
+							<div className="flex items-center gap-2">
+								<div className="h-3 w-3 rounded-full bg-blue-500" />
+								<span className="font-medium text-sm">通常実装</span>
+							</div>
+							{pokemon.implemented_date ? (
+								<Badge
+									variant="outline"
+									className="border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-300"
+								>
+									{pokemon.implemented_date}
+								</Badge>
+							) : (
+								<Badge
+									variant="outline"
+									className="border-gray-300 text-gray-500"
+								>
+									未実装
+								</Badge>
+							)}
+						</div>
+
+						<div className="space-y-2">
+							<div className="flex items-center gap-2">
+								<Sparkles className="h-3 w-3 text-yellow-500" />
+								<span className="font-medium text-sm">色違い実装</span>
+							</div>
+							{pokemon.shiny_implemented_date ? (
+								<Badge
+									variant="outline"
+									className="border-yellow-300 text-yellow-700 dark:border-yellow-700 dark:text-yellow-300"
+								>
+									{pokemon.shiny_implemented_date}
+								</Badge>
+							) : (
+								<Badge
+									variant="outline"
+									className="border-gray-300 text-gray-500"
+								>
+									未実装
+								</Badge>
+							)}
+						</div>
+					</div>
+				</CardContent>
+			</Card>
+
+			{/* ステータスセクション */}
+			<Card>
+				<CardHeader>
+					<CardTitle className="flex items-center justify-between">
+						<span>ステータス</span>
+						<Badge variant="secondary">合計: {totalStats}</Badge>
+					</CardTitle>
+				</CardHeader>
+				<CardContent className="space-y-4">
+					{stats.map((stat) => (
+						<div key={stat.stat.name} className="space-y-2">
+							<div className="flex items-center justify-between">
+								<span className="font-medium text-sm">
+									{statNameMap[stat.stat.name] || stat.stat.name}
+								</span>
+								<span className="font-mono text-sm">{stat.base_stat}</span>
+							</div>
+							<Progress value={(stat.base_stat / 255) * 100} className="h-2" />
+						</div>
+					))}
+				</CardContent>
+			</Card>
 		</div>
+	);
+}
+
+export default function PokemonDetail({ params }: Props) {
+	return (
+		<Suspense fallback={<PokemonDetailSkeleton />}>
+			<PokemonDetailContent params={params} />
+		</Suspense>
 	);
 }
