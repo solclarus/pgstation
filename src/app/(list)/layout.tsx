@@ -1,6 +1,6 @@
 "use client";
 
-import { ControlPanel } from "@/components/control-panel";
+import { ControlPanel } from "@/components/layout/control-panel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@ui/button";
 import {
@@ -51,9 +51,7 @@ export default function ListLayout({
 					<ControlPanel />
 				</div>
 			)}
-			<div className="flex-1 rounded-md border bg-card p-4 md:ml-80">
-				{children}
-			</div>
+			<div className="flex-1 md:ml-80">{children}</div>
 		</div>
 	);
 }

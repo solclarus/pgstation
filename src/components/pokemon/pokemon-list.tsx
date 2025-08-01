@@ -1,7 +1,7 @@
 "use client";
 
-import { PokemonCard } from "@/components/pokemon-card";
-import { ShinyToggleButton } from "@/components/shiny-toggle-button";
+import { ShinyToggleButton } from "@/components/layout/shiny-toggle-button";
+import { PokemonCard } from "@/components/pokemon/pokemon-card";
 import { usePokemonParams } from "@/hooks/use-pokemon-params";
 import { useShinyToggle } from "@/hooks/use-shiny-toggle";
 import { processPokemons } from "@/lib/control-panel/process";

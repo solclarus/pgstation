@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/styles/globals.css";
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
+import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ShinyProvider } from "@/contexts/shiny-context";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@ui/sonner";
 
@@ -37,13 +38,16 @@ export default function RootLayout({
 					defaultTheme="system"
 					enableSystem
 					disableTransitionOnChange
+					storageKey="pgtrail-theme"
 				>
-					<div className="flex min-h-dvh flex-col">
-						<Header />
-						<main className="mt-22 flex-1 px-4">{children}</main>
-						<Footer />
-					</div>
-					<Toaster />
+					<ShinyProvider>
+						<div className="flex min-h-dvh flex-col">
+							<Header />
+							<main className="mt-22 flex-1 px-4">{children}</main>
+							<Footer />
+						</div>
+						<Toaster />
+					</ShinyProvider>
 				</ThemeProvider>
 			</body>
 		</html>
