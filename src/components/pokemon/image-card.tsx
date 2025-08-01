@@ -62,7 +62,7 @@ export const ImageCard = ({
 					fill
 					priority={priority}
 					loading={priority ? undefined : "lazy"}
-					sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+					sizes="(max-width: 768px) 25vw, (max-width: 1200px) 20vw, 128px"
 					className={cn("object-contain transition-opacity duration-300", {
 						"opacity-0": loadState !== "loaded",
 						"opacity-100": loadState === "loaded",
