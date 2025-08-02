@@ -1,3 +1,4 @@
+import { getClassDisplay } from "@/constants/pokemon-display";
 import type { ClassStats } from "@/lib/stats";
 import { Badge } from "@ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
@@ -9,19 +10,6 @@ interface ClassStatsProps {
 }
 
 export function ClassStatsComponent({ stats }: ClassStatsProps) {
-	// クラス名を日本語に変換するマッピング
-	const classNameMap: Record<string, string> = {
-		normal: "通常",
-		legendary: "伝説",
-		mythical: "幻",
-		"ultra-beast": "ウルトラビースト",
-		paradox: "パラドックス",
-	};
-
-	const getClassName = (className: string) => {
-		return classNameMap[className] || className;
-	};
-
 	const getClassColor = (className: string) => {
 		switch (className) {
 			case "legendary":
@@ -55,7 +43,7 @@ export function ClassStatsComponent({ stats }: ClassStatsProps) {
 										variant="outline"
 										className={getClassColor(stat.class)}
 									>
-										{getClassName(stat.class)}
+										{getClassDisplay(stat.class).label}
 									</Badge>
 									<span className="text-muted-foreground text-sm">
 										{stat.total}匹中{stat.implemented}匹実装済み
@@ -123,13 +111,15 @@ export function ClassStatsComponent({ stats }: ClassStatsProps) {
 									%
 								</div>
 								<div className="text-muted-foreground text-xs">
-									{getClassName(
-										stats.reduce((prev, current) =>
-											prev.implementationRate > current.implementationRate
-												? prev
-												: current,
-										).class,
-									)}
+									{
+										getClassDisplay(
+											stats.reduce((prev, current) =>
+												prev.implementationRate > current.implementationRate
+													? prev
+													: current,
+											).class,
+										).label
+									}
 								</div>
 							</div>
 							<div>
@@ -140,11 +130,13 @@ export function ClassStatsComponent({ stats }: ClassStatsProps) {
 									{Math.max(...stats.map((s) => s.shinyRate)).toFixed(1)}%
 								</div>
 								<div className="text-muted-foreground text-xs">
-									{getClassName(
-										stats.reduce((prev, current) =>
-											prev.shinyRate > current.shinyRate ? prev : current,
-										).class,
-									)}
+									{
+										getClassDisplay(
+											stats.reduce((prev, current) =>
+												prev.shinyRate > current.shinyRate ? prev : current,
+											).class,
+										).label
+									}
 								</div>
 							</div>
 						</div>

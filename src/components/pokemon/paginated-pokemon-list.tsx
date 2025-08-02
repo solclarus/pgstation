@@ -1,12 +1,12 @@
 "use client";
 
 import { PokemonCard } from "@/components/pokemon/pokemon-card";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { usePokemonParams } from "@/hooks/use-pokemon-params";
+import { useListControls } from "@/hooks/use-list-controls";
 import { useShinyToggle } from "@/hooks/use-shiny-toggle";
-import { processPokemons } from "@/lib/control-panel/process";
+import { processPokemons } from "@/lib/control-panel/config";
 import type { Pokemon } from "@/types/pokemon";
+import { Button } from "@ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
 import { ChevronLeft, ChevronRight, Grid3X3 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
@@ -14,7 +14,7 @@ import { useCallback, useEffect, useMemo } from "react";
 const ITEMS_PER_PAGE = 50;
 
 export function PaginatedPokemonList({ pokemons }: { pokemons: Pokemon[] }) {
-	const { options } = usePokemonParams();
+	const { options } = useListControls();
 	const { isShiny } = useShinyToggle();
 	const router = useRouter();
 	const searchParams = useSearchParams();
