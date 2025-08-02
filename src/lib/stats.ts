@@ -268,7 +268,7 @@ export const getImplementationTrend = cache(
 					cumulativeShinyImplementations,
 				};
 			}
-			
+
 			cumulativeImplementations += data.implementations;
 			cumulativeShinyImplementations += data.shinyImplementations;
 
