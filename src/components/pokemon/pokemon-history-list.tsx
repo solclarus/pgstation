@@ -2,9 +2,9 @@
 
 import { YearlyHeatmap } from "@/components/charts/yearly-heatmap";
 import { PokemonCard } from "@/components/pokemon/pokemon-card";
-import { usePokemonParams } from "@/hooks/use-pokemon-params";
+import { useListControls } from "@/hooks/use-list-controls";
 import { useShinyToggle } from "@/hooks/use-shiny-toggle";
-import { processPokemons } from "@/lib/control-panel/process";
+import { processPokemons } from "@/lib/control-panel/config";
 import type { Pokemon } from "@/types/pokemon";
 import { Badge } from "@ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
@@ -13,7 +13,7 @@ import { CheckCircle, Clock } from "lucide-react";
 import { useCallback, useMemo } from "react";
 
 export function PokemonHistoryList({ pokemons }: { pokemons: Pokemon[] }) {
-	const { options } = usePokemonParams();
+	const { options } = useListControls();
 	const { isShiny } = useShinyToggle();
 
 	const processedPokemon = useMemo(

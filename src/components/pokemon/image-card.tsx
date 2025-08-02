@@ -1,8 +1,8 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@ui/skeleton";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useMemo, useState } from "react";
