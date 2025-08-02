@@ -22,6 +22,48 @@ export type PokemonTypeMap = {
 	color: string;
 };
 
+// ===== POKEMON CLASS =====
+export const POKEMON_CLASSES = {
+	normal: "通常",
+	legendary: "伝説",
+	mythical: "幻",
+	ub: "UB",
+} as const;
+
+export type PokemonClass = keyof typeof POKEMON_CLASSES;
+export const pokemonClassSchema = z.enum(Object.keys(POKEMON_CLASSES) as [keyof typeof POKEMON_CLASSES, ...Array<keyof typeof POKEMON_CLASSES>]);
+
+// ===== POKEMON FORM =====
+export const POKEMON_FORMS = {
+	normal: "通常",
+	mega: "メガシンカ",
+	gmax: "キョダイマックス",
+} as const;
+
+export type PokemonForm = keyof typeof POKEMON_FORMS;
+export const pokemonFormSchema = z.enum(Object.keys(POKEMON_FORMS) as [keyof typeof POKEMON_FORMS, ...Array<keyof typeof POKEMON_FORMS>]);
+
+// ===== REGIONS =====
+export const REGIONS = {
+	kanto: "カントー",
+	johto: "ジョウト",
+	hoenn: "ホウエン",
+	sinnoh: "シンオウ",
+	unova: "イッシュ",
+	kalos: "カロス",
+	alola: "アローラ",
+	galar: "ガラル",
+	hisui: "ヒスイ",
+	paldea: "パルデア",
+	unknown: "未確認",
+} as const;
+
+export type Region = keyof typeof REGIONS;
+export const regionSchema = z.enum(Object.keys(REGIONS) as [keyof typeof REGIONS, ...Array<keyof typeof REGIONS>]);
+
+// ===== POKEMON TYPES =====
+// Note: Pokemon types are handled separately in constants/pokemon-type.ts
+// to maintain the existing color and multi-language structure
 export const pokemonTypeSchema = z.enum([
 	"normal",
 	"fire",
@@ -43,33 +85,7 @@ export const pokemonTypeSchema = z.enum([
 	"fairy",
 ]);
 
-export const pokemonClassSchema = z.enum([
-	"normal",
-	"legendary",
-	"mythical",
-	"ub",
-]);
-
-export const pokemonFormSchema = z.enum(["normal", "mega", "gmax"]);
-
-export const regionSchema = z.enum([
-	"kanto",
-	"johto",
-	"hoenn",
-	"sinnoh",
-	"unova",
-	"kalos",
-	"alola",
-	"galar",
-	"hisui",
-	"paldea",
-	"unknown",
-]);
-
-export type PokemonClass = z.infer<typeof pokemonClassSchema>;
-export type PokemonForm = z.infer<typeof pokemonFormSchema>;
 export type PokemonType = z.infer<typeof pokemonTypeSchema>;
-export type Region = z.infer<typeof regionSchema>;
 
 export interface PokemonApiResponse {
 	height: number;
