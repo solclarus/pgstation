@@ -1,5 +1,11 @@
 import { ImageCard } from "@/components/pokemon/image-card";
 import { PokemonDetailSkeleton } from "@/components/skeletons/pokemon-detail-skeleton";
+import {
+	getClassDisplay,
+	getRegionName,
+	getStatName,
+	getTypeColor,
+} from "@/constants/pokemon-display";
 import { getPokemon } from "@/lib/pokemon";
 import type { PokemonApiResponse } from "@/types/pokemon";
 import { Badge } from "@ui/badge";
@@ -19,72 +25,6 @@ import { Suspense } from "react";
 
 type Props = {
 	params: Promise<{ id: string }>;
-};
-
-const typeColorMap: Record<string, string> = {
-	normal: "bg-gray-400",
-	fire: "bg-red-500",
-	water: "bg-blue-500",
-	electric: "bg-yellow-400",
-	grass: "bg-green-500",
-	ice: "bg-blue-200",
-	fighting: "bg-red-700",
-	poison: "bg-purple-500",
-	ground: "bg-yellow-600",
-	flying: "bg-indigo-400",
-	psychic: "bg-pink-500",
-	bug: "bg-green-400",
-	rock: "bg-yellow-800",
-	ghost: "bg-purple-700",
-	dragon: "bg-indigo-700",
-	dark: "bg-gray-800",
-	steel: "bg-gray-500",
-	fairy: "bg-pink-300",
-};
-
-const classNameMap: Record<string, { label: string; color: string }> = {
-	normal: {
-		label: "通常",
-		color: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200",
-	},
-	legendary: {
-		label: "伝説",
-		color:
-			"bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-	},
-	mythical: {
-		label: "幻",
-		color:
-			"bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-	},
-	ub: {
-		label: "UB",
-		color:
-			"bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
-	},
-};
-
-const regionNameMap: Record<string, string> = {
-	kanto: "カントー",
-	johto: "ジョウト",
-	hoenn: "ホウエン",
-	sinnoh: "シンオウ",
-	unova: "イッシュ",
-	kalos: "カロス",
-	alola: "アローラ",
-	galar: "ガラル",
-	hisui: "ヒスイ",
-	paldea: "パルデア",
-	unknown: "不明",
-};
-
-const statNameMap: Record<string, string> = {
-	hp: "HP",
-	attack: "攻撃",
-	defense: "防御",
-	"special-attack": "特攻",
-	"special-defense": "特防",
-	speed: "素早さ",
 };
 
 async function PokemonDetailContent({ params }: Props) {
@@ -114,9 +54,9 @@ async function PokemonDetailContent({ params }: Props) {
 								{pokemon.name}
 							</CardTitle>
 						</div>
-						<Badge className={classNameMap[pokemon.pokemon_class]?.color}>
+						<Badge className={getClassDisplay(pokemon.pokemon_class).color}>
 							<Crown className="mr-1 h-3 w-3" />
-							{classNameMap[pokemon.pokemon_class]?.label}
+							{getClassDisplay(pokemon.pokemon_class).label}
 						</Badge>
 					</div>
 				</CardHeader>
@@ -177,9 +117,7 @@ async function PokemonDetailContent({ params }: Props) {
 
 						<div className="space-y-2">
 							<p className="font-medium text-sm">地方</p>
-							<Badge variant="secondary">
-								{regionNameMap[pokemon.region] || pokemon.region}
-							</Badge>
+							<Badge variant="secondary">{getRegionName(pokemon.region)}</Badge>
 						</div>
 
 						<div className="space-y-2">
@@ -188,7 +126,7 @@ async function PokemonDetailContent({ params }: Props) {
 								{pokemon.pokemon_types.map((type) => (
 									<Badge
 										key={type}
-										className={`text-white ${typeColorMap[type] || "bg-gray-400"}`}
+										className={`text-white ${getTypeColor(type)}`}
 									>
 										{type.toUpperCase()}
 									</Badge>
@@ -269,7 +207,7 @@ async function PokemonDetailContent({ params }: Props) {
 						<div key={stat.stat.name} className="space-y-2">
 							<div className="flex items-center justify-between">
 								<span className="font-medium text-sm">
-									{statNameMap[stat.stat.name] || stat.stat.name}
+									{getStatName(stat.stat.name)}
 								</span>
 								<span className="font-mono text-sm">{stat.base_stat}</span>
 							</div>
