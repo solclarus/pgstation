@@ -46,7 +46,7 @@ export default function RootLayout({
 							<main className="mt-22 flex-1 px-4">{children}</main>
 							<Footer />
 						</div>
-						<Toaster />
+						<Toaster position="top-center" richColors />
 					</ShinyProvider>
 				</ThemeProvider>
 			</body>
