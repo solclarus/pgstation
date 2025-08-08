@@ -1,6 +1,7 @@
 "use client";
 
 import { PokemonCard } from "@/components/pokemon/pokemon-card";
+import { useFilterNotifications } from "@/hooks/use-filter-notifications";
 import { useListControls } from "@/hooks/use-list-controls";
 import { useShinyToggle } from "@/hooks/use-shiny-toggle";
 import { processPokemons } from "@/lib/control-panel/config";
@@ -18,6 +19,9 @@ export function PaginatedPokemonList({ pokemons }: { pokemons: Pokemon[] }) {
 	const { isShiny } = useShinyToggle();
 	const router = useRouter();
 	const searchParams = useSearchParams();
+
+	// フィルター通知
+	useFilterNotifications(options);
 
 	// URLからページ番号を取得（デフォルト: 1）
 	const currentPage = useMemo(() => {
