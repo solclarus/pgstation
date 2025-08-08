@@ -32,6 +32,34 @@ export const optionSchema = z.object({
 export type Option = z.infer<typeof optionSchema>;
 export type SortOption = z.infer<typeof sortOptionSchema>;
 
+// ===== DATE HANDLING UTILITIES =====
+
+/**
+ * Dateオブジェクトをローカル時刻のYYYY-MM-DD形式に変換
+ * タイムゾーンの影響を受けないように日付のみを取得
+ */
+function formatDateToLocal(date: Date): string {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
+}
+
+/**
+ * YYYY-MM-DD形式の文字列をローカルのDateオブジェクトに変換
+ * タイムゾーンの影響を受けないように年、月、日を個別に解析
+ */
+function parseLocalDate(dateStr: string): Date | undefined {
+	const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+	if (!match) return undefined;
+	
+	const year = Number.parseInt(match[1], 10);
+	const month = Number.parseInt(match[2], 10) - 1; // Monthは0ベース
+	const day = Number.parseInt(match[3], 10);
+	
+	return new Date(year, month, day);
+}
+
 // ===== VALIDATION FUNCTIONS =====
 const DEFAULT_SORT_OPTION = "pokedex-number-asc" as const;
 
