@@ -31,12 +31,34 @@ async function PokemonDetailContent({ params }: Props) {
 	const { id } = await params;
 	const pokemon = await getPokemon(id);
 	if (!pokemon) {
-		return null;
+		return (
+			<div className="mx-auto max-w-4xl p-4">
+				<Card>
+					<CardContent className="flex flex-col items-center justify-center py-12">
+						<p className="text-muted-foreground">ポケモンが見つかりません</p>
+					</CardContent>
+				</Card>
+			</div>
+		);
 	}
-	const response = await fetch(
-		`https://pokeapi.co/api/v2/pokemon/${pokemon?.pokedex_number}`,
-	);
-	const { height, weight, stats }: PokemonApiResponse = await response.json();
+
+	let pokemonApiData: PokemonApiResponse | null = null;
+	try {
+		const response = await fetch(
+			`https://pokeapi.co/api/v2/pokemon/${pokemon.pokedex_number}`,
+			{ 
+				cache: 'force-cache',
+				next: { revalidate: 3600 } // 1時間キャッシュ
+			}
+		);
+		if (response.ok) {
+			pokemonApiData = await response.json();
+		}
+	} catch (error) {
+		console.error('Failed to fetch Pokemon API data:', error);
+	}
+
+	const { height = 0, weight = 0, stats = [] } = pokemonApiData || {};
 
 	const totalStats = stats.reduce((sum, stat) => sum + stat.base_stat, 0);
 
@@ -98,20 +120,22 @@ async function PokemonDetailContent({ params }: Props) {
 						</CardTitle>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<div className="grid grid-cols-2 gap-4">
-							<div className="flex items-center gap-2">
-								<Ruler className="h-4 w-4 text-muted-foreground" />
-								<span className="text-sm">身長:</span>
-								<span className="font-medium">{(height / 10).toFixed(1)}m</span>
+						{pokemonApiData && (
+							<div className="grid grid-cols-2 gap-4">
+								<div className="flex items-center gap-2">
+									<Ruler className="h-4 w-4 text-muted-foreground" />
+									<span className="text-sm">身長:</span>
+									<span className="font-medium">{(height / 10).toFixed(1)}m</span>
+								</div>
+								<div className="flex items-center gap-2">
+									<Weight className="h-4 w-4 text-muted-foreground" />
+									<span className="text-sm">体重:</span>
+									<span className="font-medium">
+										{(weight / 10).toFixed(1)}kg
+									</span>
+								</div>
 							</div>
-							<div className="flex items-center gap-2">
-								<Weight className="h-4 w-4 text-muted-foreground" />
-								<span className="text-sm">体重:</span>
-								<span className="font-medium">
-									{(weight / 10).toFixed(1)}kg
-								</span>
-							</div>
-						</div>
+						)}
 
 						<Separator />
 
@@ -195,27 +219,29 @@ async function PokemonDetailContent({ params }: Props) {
 			</Card>
 
 			{/* ステータスセクション */}
-			<Card>
-				<CardHeader>
-					<CardTitle className="flex items-center justify-between">
-						<span>ステータス</span>
-						<Badge variant="secondary">合計: {totalStats}</Badge>
-					</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-4">
-					{stats.map((stat) => (
-						<div key={stat.stat.name} className="space-y-2">
-							<div className="flex items-center justify-between">
-								<span className="font-medium text-sm">
-									{getStatName(stat.stat.name)}
-								</span>
-								<span className="font-mono text-sm">{stat.base_stat}</span>
+			{pokemonApiData && stats.length > 0 && (
+				<Card>
+					<CardHeader>
+						<CardTitle className="flex items-center justify-between">
+							<span>ステータス</span>
+							<Badge variant="secondary">合計: {totalStats}</Badge>
+						</CardTitle>
+					</CardHeader>
+					<CardContent className="space-y-4">
+						{stats.map((stat) => (
+							<div key={stat.stat.name} className="space-y-2">
+								<div className="flex items-center justify-between">
+									<span className="font-medium text-sm">
+										{getStatName(stat.stat.name)}
+									</span>
+									<span className="font-mono text-sm">{stat.base_stat}</span>
+								</div>
+								<Progress value={(stat.base_stat / 255) * 100} className="h-2" />
 							</div>
-							<Progress value={(stat.base_stat / 255) * 100} className="h-2" />
-						</div>
-					))}
-				</CardContent>
-			</Card>
+						))}
+					</CardContent>
+				</Card>
+			)}
 		</div>
 	);
 }

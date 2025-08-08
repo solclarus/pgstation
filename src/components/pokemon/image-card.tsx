@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@ui/skeleton";
 import { ImageIcon } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface ImageCardProps {
 	id: string;
@@ -23,18 +23,33 @@ export const ImageCard = ({
 	const [loadState, setLoadState] = useState<"loading" | "loaded" | "error">(
 		"loading",
 	);
+	const [isClient, setIsClient] = useState(false);
+
+	useEffect(() => {
+		setIsClient(true);
+	}, []);
 
 	const imageUrl = useMemo(() => {
-		if (!id) return null;
+		if (!id || !isClient) return null;
 		const supabase = createClient();
 		const { data } = supabase.storage
 			.from("sprites")
 			.getPublicUrl(`pokemons/${isShiny ? "shiny" : "normal"}/${id}.png`);
 		return data.publicUrl;
-	}, [id, isShiny]);
+	}, [id, isShiny, isClient]);
 
 	const handleLoad = useCallback(() => setLoadState("loaded"), []);
 	const handleError = useCallback(() => setLoadState("error"), []);
+
+	if (!isClient) {
+		return (
+			<div className={className}>
+				<div className="relative h-full w-full">
+					<Skeleton className="absolute inset-0 rounded-md" />
+				</div>
+			</div>
+		);
+	}
 
 	if (!imageUrl) return null;
 
