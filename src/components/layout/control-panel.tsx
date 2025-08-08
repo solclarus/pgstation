@@ -33,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { BooleanFilter } from "./boolean-filter";
 import { MultiSelectFilter } from "./multi-select-filter";
 import { PokemonTypeFilter } from "./pokemon-type-filter";
+import { DateRangeFilter } from "../control-panel/date-range-filter";
 
 export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 	const { options, setOption, clearOption } = useListControls();
@@ -149,6 +150,17 @@ export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 										<MultiSelectFilter
 											label={"地方"}
 											options={REGION_OPTIONS}
+											value={field.value}
+											onChange={field.onChange}
+										/>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name="implementationDateRange"
+									render={({ field }) => (
+										<DateRangeFilter
 											value={field.value}
 											onChange={field.onChange}
 										/>
