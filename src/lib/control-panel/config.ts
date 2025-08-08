@@ -19,6 +19,12 @@ export const sortOptionSchema = z.enum([
 	"name-desc",
 ]);
 
+// Date range schema
+export const dateRangeSchema = z.object({
+	from: z.date().optional(),
+	to: z.date().optional(),
+}).optional();
+
 export const optionSchema = z.object({
 	class: z.array(pokemonClassSchema),
 	form: z.array(pokemonFormSchema),
@@ -26,6 +32,7 @@ export const optionSchema = z.object({
 	isShinyImplemented: z.array(shinyImplementedStatusSchema),
 	pokemonType: z.array(pokemonTypeFilterOptionSchema),
 	region: z.array(regionSchema),
+	implementationDateRange: dateRangeSchema,
 	sort: sortOptionSchema,
 });
 
@@ -132,6 +139,28 @@ export function parseBooleanStatus(param: string | null): { validItems: boolean[
 }
 
 // ===== URL PARAMETER HELPERS =====
+// Date range parsing function
+function parseDateRange(searchParams: URLSearchParams): { from?: Date; to?: Date } | undefined {
+	const fromStr = searchParams.get("dateFrom");
+	const toStr = searchParams.get("dateTo");
+	
+	if (!fromStr && !toStr) return undefined;
+	
+	const range: { from?: Date; to?: Date } = {};
+	
+	if (fromStr) {
+		const fromDate = parseLocalDate(fromStr);
+		if (fromDate) range.from = fromDate;
+	}
+	
+	if (toStr) {
+		const toDate = parseLocalDate(toStr);
+		if (toDate) range.to = toDate;
+	}
+	
+	return Object.keys(range).length > 0 ? range : undefined;
+}
+
 // パラメータ解析関数の定義
 const PARAM_PARSERS = {
 	class: (searchParams: URLSearchParams) => validateMultiParams(searchParams, "class", pokemonClassSchema),
@@ -140,6 +169,7 @@ const PARAM_PARSERS = {
 	isShinyImplemented: (searchParams: URLSearchParams) => parseBooleanStatus(searchParams.get("isShinyImplemented")),
 	pokemonType: (searchParams: URLSearchParams) => validateMultiParams(searchParams, "pokemonType", pokemonTypeSchema),
 	region: (searchParams: URLSearchParams) => validateMultiParams(searchParams, "region", regionSchema),
+	implementationDateRange: (searchParams: URLSearchParams) => parseDateRange(searchParams),
 	sort: (searchParams: URLSearchParams) => ({ validValue: validateSortOption(searchParams.get("sort")), hasInvalidValues: false }),
 } as const;
 
@@ -169,6 +199,23 @@ const URL_UPDATERS = {
 		if (value.length === 0) params.delete("region");
 		else params.set("region", value.join(","));
 	},
+	implementationDateRange: (params: URLSearchParams, value?: { from?: Date; to?: Date }) => {
+		if (!value || (!value.from && !value.to)) {
+			params.delete("dateFrom");
+			params.delete("dateTo");
+		} else {
+			if (value.from) {
+				params.set("dateFrom", formatDateToLocal(value.from));
+			} else {
+				params.delete("dateFrom");
+			}
+			if (value.to) {
+				params.set("dateTo", formatDateToLocal(value.to));
+			} else {
+				params.delete("dateTo");
+			}
+		}
+	},
 	sort: (params: URLSearchParams, value: string) => {
 		if (value && value !== "pokedex-number-asc") params.set("sort", value);
 		else params.delete("sort");
@@ -177,6 +224,7 @@ const URL_UPDATERS = {
 
 export const BOOLEAN_FILTER_KEYS = ["isImplemented", "isShinyImplemented"] as const;
 export const ARRAY_FILTER_KEYS = ["class", "form", "pokemonType", "region"] as const;
+export const DATE_RANGE_FILTER_KEYS = ["implementationDateRange"] as const;
 
 export function parseSearchParams(searchParams: URLSearchParams): Option {
 	return {
@@ -186,6 +234,7 @@ export function parseSearchParams(searchParams: URLSearchParams): Option {
 		isShinyImplemented: PARAM_PARSERS.isShinyImplemented(searchParams).validItems,
 		pokemonType: PARAM_PARSERS.pokemonType(searchParams).validItems,
 		region: PARAM_PARSERS.region(searchParams).validItems,
+		implementationDateRange: PARAM_PARSERS.implementationDateRange(searchParams),
 		sort: PARAM_PARSERS.sort(searchParams).validValue,
 	};
 }
@@ -269,6 +318,10 @@ export function parseAndCleanSearchParams(searchParams: URLSearchParams): {
 		}
 	}
 	
+	const implementationDateRangeResult = PARAM_PARSERS.implementationDateRange(searchParams);
+	options.implementationDateRange = implementationDateRangeResult;
+	// 日付範囲は常に有効な値が返されるので無効値チェック不要
+	
 	const sortResult = PARAM_PARSERS.sort(searchParams);
 	options.sort = sortResult.validValue;
 	// ソートは常に有効な値が返されるので無効値チェック不要
@@ -291,6 +344,7 @@ export function updateURLParams(
 	URL_UPDATERS.isShinyImplemented(params, options.isShinyImplemented);
 	URL_UPDATERS.pokemonType(params, options.pokemonType);
 	URL_UPDATERS.region(params, options.region);
+	URL_UPDATERS.implementationDateRange(params, options.implementationDateRange);
 	URL_UPDATERS.sort(params, options.sort);
 
 	return params;
@@ -330,6 +384,35 @@ const createBooleanFilter = (extractValue: (pokemon: Pokemon) => boolean) => {
 	};
 };
 
+/**
+ * 日付範囲フィルターのヘルパー関数
+ */
+const createDateRangeFilter = (extractDate: (pokemon: Pokemon) => Date | null) => {
+	return (value: unknown, pokemon: Pokemon): boolean => {
+		if (!value || typeof value !== 'object') return true;
+		const range = value as { from?: Date; to?: Date };
+		if (!range.from && !range.to) return true;
+		
+		const pokemonDate = extractDate(pokemon);
+		if (!pokemonDate) return false;
+		
+		// 日付のみで比較（時間は無視）
+		const pokemonDateOnly = new Date(pokemonDate.getFullYear(), pokemonDate.getMonth(), pokemonDate.getDate());
+		
+		if (range.from) {
+			const fromDateOnly = new Date(range.from.getFullYear(), range.from.getMonth(), range.from.getDate());
+			if (pokemonDateOnly < fromDateOnly) return false;
+		}
+		
+		if (range.to) {
+			const toDateOnly = new Date(range.to.getFullYear(), range.to.getMonth(), range.to.getDate());
+			if (pokemonDateOnly > toDateOnly) return false;
+		}
+		
+		return true;
+	};
+};
+
 // フィルター定義リスト
 const FILTER: Array<{
 	key: keyof Option;
@@ -360,6 +443,10 @@ const FILTER: Array<{
 	{
 		key: "region",
 		match: createArrayFilter((values, p) => values.includes(p.region)),
+	},
+	{
+		key: "implementationDateRange",
+		match: createDateRangeFilter((p) => p.implemented_date ? new Date(p.implemented_date) : null),
 	},
 ];
 
@@ -427,6 +514,11 @@ export function hasActiveFilters(options: Option): boolean {
 		if (Array.isArray(value)) {
 			return value.length > 0;
 		}
+		// 日付範囲フィルターのチェック
+		if (key === 'implementationDateRange' && value && typeof value === 'object') {
+			const range = value as { from?: Date; to?: Date };
+			return !!(range.from || range.to);
+		}
 		return false;
 	});
 	
@@ -447,6 +539,11 @@ export function processPokemons(
 		const value = option[key];
 		if (Array.isArray(value)) {
 			return value.length > 0;
+		}
+		// 日付範囲フィルターのチェック
+		if (key === 'implementationDateRange' && value && typeof value === 'object') {
+			const range = value as { from?: Date; to?: Date };
+			return !!(range.from || range.to);
 		}
 		return false;
 	});
