@@ -53,6 +53,7 @@ export function PokemonTypeFilter({
 									alt={option.label}
 									width={32}
 									height={32}
+									unoptimized
 									className={`size-8 rounded-full ${
 										checked ? "opacity-100" : "opacity-30"
 									}`}

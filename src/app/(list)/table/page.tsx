@@ -32,6 +32,7 @@ export default async function Table() {
 												alt={type}
 												width={32}
 												height={32}
+												unoptimized
 												className={"size-6 rounded-full"}
 											/>
 										);
