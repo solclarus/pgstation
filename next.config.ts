@@ -3,9 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
 	images: {
 		formats: ["image/webp", "image/avif"],
-		deviceSizes: [640, 750, 828, 1080, 1200, 1920], // 不要な大サイズを削除
-		imageSizes: [16, 32, 48, 64, 96, 128, 256], // ポケモン画像に適したサイズに最適化
-		minimumCacheTTL: 2678400, // 31日間 (Next.js公式推奨値)
+		deviceSizes: [640, 750, 828, 1080, 1200], // モバイル・タブレット中心に削減
+		imageSizes: [32, 64, 96, 128, 256], // 小さいサイズを削減してポケモン画像に最適化
+		minimumCacheTTL: 31536000, // 1年間 (より長いキャッシュでtransformation回数削減)
 		localPatterns: [
 			{
 				pathname: "/**",
