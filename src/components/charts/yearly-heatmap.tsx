@@ -132,8 +132,7 @@ export function YearlyHeatmap({ pokemons, onDateClick }: YearlyHeatmapProps) {
 					<div className="hidden items-center gap-2 text-muted-foreground text-xs md:flex">
 						<span>Less</span>
 						<div className="flex items-center gap-1">
-							<div className="size-3 rounded-sm bg-muted/30" />
-							<div className="size-3 rounded-sm bg-green-200 dark:bg-green-900/50" />
+							<div className="size-3 rounded-sm bg-muted" />
 							<div className="size-3 rounded-sm bg-green-400 dark:bg-green-700/70" />
 							<div className="size-3 rounded-sm bg-green-600 dark:bg-green-600/90" />
 							<div className="size-3 rounded-sm bg-green-800 dark:bg-green-500" />
@@ -183,8 +182,7 @@ export function YearlyHeatmap({ pokemons, onDateClick }: YearlyHeatmapProps) {
 					<div className="flex items-center gap-2 text-muted-foreground text-xs">
 						<span>少ない</span>
 						<div className="flex items-center gap-1">
-							<div className="size-2.5 rounded-sm bg-muted/30" />
-							<div className="size-2.5 rounded-sm bg-green-200 dark:bg-green-900/50" />
+							<div className="size-2.5 rounded-sm bg-muted" />
 							<div className="size-2.5 rounded-sm bg-green-400 dark:bg-green-700/70" />
 							<div className="size-2.5 rounded-sm bg-green-600 dark:bg-green-600/90" />
 							<div className="size-2.5 rounded-sm bg-green-800 dark:bg-green-500" />

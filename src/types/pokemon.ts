@@ -31,7 +31,12 @@ export const POKEMON_CLASSES = {
 } as const;
 
 export type PokemonClass = keyof typeof POKEMON_CLASSES;
-export const pokemonClassSchema = z.enum(Object.keys(POKEMON_CLASSES) as [keyof typeof POKEMON_CLASSES, ...Array<keyof typeof POKEMON_CLASSES>]);
+export const pokemonClassSchema = z.enum(
+	Object.keys(POKEMON_CLASSES) as [
+		keyof typeof POKEMON_CLASSES,
+		...Array<keyof typeof POKEMON_CLASSES>,
+	],
+);
 
 // ===== POKEMON FORM =====
 export const POKEMON_FORMS = {
@@ -41,7 +46,12 @@ export const POKEMON_FORMS = {
 } as const;
 
 export type PokemonForm = keyof typeof POKEMON_FORMS;
-export const pokemonFormSchema = z.enum(Object.keys(POKEMON_FORMS) as [keyof typeof POKEMON_FORMS, ...Array<keyof typeof POKEMON_FORMS>]);
+export const pokemonFormSchema = z.enum(
+	Object.keys(POKEMON_FORMS) as [
+		keyof typeof POKEMON_FORMS,
+		...Array<keyof typeof POKEMON_FORMS>,
+	],
+);
 
 // ===== REGIONS =====
 export const REGIONS = {
@@ -59,7 +69,12 @@ export const REGIONS = {
 } as const;
 
 export type Region = keyof typeof REGIONS;
-export const regionSchema = z.enum(Object.keys(REGIONS) as [keyof typeof REGIONS, ...Array<keyof typeof REGIONS>]);
+export const regionSchema = z.enum(
+	Object.keys(REGIONS) as [
+		keyof typeof REGIONS,
+		...Array<keyof typeof REGIONS>,
+	],
+);
 
 // ===== POKEMON TYPES =====
 // Note: Pokemon types are handled separately in constants/pokemon-type.ts

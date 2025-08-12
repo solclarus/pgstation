@@ -14,7 +14,13 @@ export async function Header() {
 			<div className="flex items-center">
 				<Link href={"/"} className="flex items-center gap-2">
 					<div className="overflow-hidden rounded-md">
-						<Image src={"/icon.jpg"} alt={"icon"} width={28} height={28} unoptimized />
+						<Image
+							src={"/icon.jpg"}
+							alt={"icon"}
+							width={28}
+							height={28}
+							unoptimized
+						/>
 					</div>
 					<span className="font-extrabold">{config.title}</span>
 				</Link>
