@@ -1,7 +1,12 @@
 "use client";
 
+import {
+	BooleanFilter,
+	DateRangeFilter,
+	MultiSelectFilter,
+	PokemonTypeFilter,
+} from "@/components/filters";
 import { DisplayMode } from "@/components/layout/display-mode";
-import { useListControls } from "@/hooks/use-list-controls";
 import {
 	CLASS_OPTIONS,
 	FORM_OPTIONS,
@@ -9,12 +14,16 @@ import {
 	REGION_OPTIONS,
 	SORT_OPTIONS,
 } from "@/constants/pokemon-options";
+import { useListControls } from "@/hooks/use-list-controls";
 import {
-	type Option,
-	optionSchema,
-	isOptionsEqual,
+	type FormInput,
+	formInputSchema,
+	getDefaultOptionValues,
+	getFieldValue,
 	hasActiveFilters,
-} from "@/lib/control-panel/config";
+	isOptionsEqual,
+	parseFormInput,
+} from "@/lib/filters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
@@ -30,16 +39,12 @@ import {
 import { SlidersHorizontal } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { BooleanFilter } from "./boolean-filter";
-import { MultiSelectFilter } from "./multi-select-filter";
-import { PokemonTypeFilter } from "./pokemon-type-filter";
-import { DateRangeFilter } from "../control-panel/date-range-filter";
 
 export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 	const { options, setOption, clearOption } = useListControls();
 
-	const form = useForm<Option>({
-		resolver: zodResolver(optionSchema),
+	const form = useForm<FormInput>({
+		resolver: zodResolver(formInputSchema),
 		defaultValues: options,
 	});
 
@@ -47,23 +52,29 @@ export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 		form.reset(options);
 	}, [options, form]);
 
-	const onSubmit = (values: Option) => {
-		setOption(values);
+	const onSubmit = (values: FormInput) => {
+		const optionValues = parseFormInput(values);
+		setOption(optionValues);
 		onApplied?.();
 	};
 
+	const handleReset = () => {
+		clearOption();
+		form.reset(getDefaultOptionValues());
+	};
+
 	const formValues = form.watch();
-	
+
 	// パフォーマンス最適化: useMemoで軽量な比較関数を使用
-	const hasChanges = useMemo(
-		() => !isOptionsEqual(formValues, options),
-		[formValues, options]
-	);
-	
+	const hasChanges = useMemo(() => {
+		const normalizedFormValues = parseFormInput(formValues);
+		return !isOptionsEqual(normalizedFormValues, options);
+	}, [formValues, options]);
+
 	// パフォーマンス最適化: useMemoでアクティブフィルター判定を最適化
 	const hasActiveFiltersState = useMemo(
 		() => hasActiveFilters(options),
-		[options]
+		[options],
 	);
 
 	return (
@@ -86,12 +97,12 @@ export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 							>
 								<FormField
 									control={form.control}
-									name="class"
+									name="filter.class"
 									render={({ field }) => (
 										<MultiSelectFilter
 											label={"分類"}
 											options={CLASS_OPTIONS}
-											value={field.value}
+											value={getFieldValue(field.value, [])}
 											onChange={field.onChange}
 										/>
 									)}
@@ -99,58 +110,58 @@ export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 
 								<FormField
 									control={form.control}
-									name="form"
+									name="filter.form"
 									render={({ field }) => (
 										<MultiSelectFilter
 											label={"姿"}
 											options={FORM_OPTIONS}
-											value={field.value}
+											value={getFieldValue(field.value, [])}
 											onChange={field.onChange}
 										/>
 									)}
 								/>
 								<FormField
 									control={form.control}
-									name="isImplemented"
+									name="filter.isImplemented"
 									render={({ field }) => (
 										<BooleanFilter
 											label="実装"
-											value={field.value}
+											value={getFieldValue(field.value, [])}
 											onChange={field.onChange}
 										/>
 									)}
 								/>
 								<FormField
 									control={form.control}
-									name="isShinyImplemented"
+									name="filter.isShinyImplemented"
 									render={({ field }) => (
 										<BooleanFilter
 											label="色違い実装"
-											value={field.value}
+											value={getFieldValue(field.value, [])}
 											onChange={field.onChange}
 										/>
 									)}
 								/>
 								<FormField
 									control={form.control}
-									name="pokemonType"
+									name="filter.pokemonType"
 									render={({ field }) => (
 										<PokemonTypeFilter
 											label="タイプ"
 											options={POKEMON_TYPE_OPTIONS}
-											value={field.value}
+											value={getFieldValue(field.value, [])}
 											onChange={field.onChange}
 										/>
 									)}
 								/>
 								<FormField
 									control={form.control}
-									name="region"
+									name="filter.region"
 									render={({ field }) => (
 										<MultiSelectFilter
 											label={"地方"}
 											options={REGION_OPTIONS}
-											value={field.value}
+											value={getFieldValue(field.value, [])}
 											onChange={field.onChange}
 										/>
 									)}
@@ -158,7 +169,7 @@ export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 
 								<FormField
 									control={form.control}
-									name="implementationDateRange"
+									name="filter.implementationDateRange"
 									render={({ field }) => (
 										<DateRangeFilter
 											value={field.value}
@@ -201,7 +212,7 @@ export function ControlPanel({ onApplied }: { onApplied?: () => void } = {}) {
 									<Button
 										type="button"
 										variant="outline"
-										onClick={clearOption}
+										onClick={handleReset}
 										disabled={!hasActiveFiltersState}
 										className="flex-1"
 									>
