@@ -1,7 +1,7 @@
 "use client";
 
-import type { Option } from "@/lib/control-panel/config";
-import { hasActiveFilters } from "@/lib/control-panel/config";
+import type { Option } from "@/lib/filters";
+import { hasActiveFilters } from "@/lib/filters";
 import { Filter, RotateCcw } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";

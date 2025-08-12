@@ -1,55 +1,25 @@
 "use client";
 
-import type { Option } from "@/lib/control-panel/config";
-import {
-	parseAndCleanSearchParams,
-	updateURLParams,
-} from "@/lib/control-panel/config";
+import type { Option } from "@/lib/filters";
+import { normalizeSearchParams, updateURLParams } from "@/lib/filters";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useRef, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 export function useListControls() {
-	const searchParams = useSearchParams();
-	const router = useRouter();
 	const pathname = usePathname();
-	
-	// URL解析のキャッシュ用ref
-	const lastSearchParams = useRef<string>("");
-	const cachedOptions = useRef<Option | null>(null);
-	const pendingCleanupParams = useRef<URLSearchParams | null>(null);
+	const router = useRouter();
+	const searchParams = useSearchParams();
 
-	const options = useMemo(() => {
-		const currentParams = searchParams.toString();
-		
-		// パラメータが変更されていない場合はキャッシュを返す
-		if (currentParams === lastSearchParams.current && cachedOptions.current) {
-			return cachedOptions.current;
-		}
-		
-		// 新しいパラメータを解析してキャッシュに保存
-		const { options: parsed, cleanedParams } = parseAndCleanSearchParams(searchParams);
-		
-		// 無効なパラメータが検出された場合、useEffectで処理するためにrefに保存
-		if (cleanedParams) {
-			pendingCleanupParams.current = cleanedParams;
-		}
-		
-		lastSearchParams.current = currentParams;
-		cachedOptions.current = parsed;
-		
-		return parsed;
+	const { options, cleanedParams } = useMemo(() => {
+		return normalizeSearchParams(searchParams);
 	}, [searchParams]);
 
-	// useEffectでマウント後にURL修正を実行
+	// 無効パラメータがあれば副作用としてURL修正
 	useEffect(() => {
-		if (pendingCleanupParams.current) {
-			const cleanedParams = pendingCleanupParams.current;
-			pendingCleanupParams.current = null;
-			
-			const newUrl = `${pathname}?${cleanedParams.toString()}`;
-			router.replace(newUrl);
+		if (cleanedParams) {
+			router.replace(`${pathname}?${cleanedParams.toString()}`);
 		}
-	}); // 依存関係配列なし = 毎回実行されるが、refで制御
+	}, [cleanedParams, router, pathname]);
 
 	const setOption = useCallback(
 		(options: Option) => {
