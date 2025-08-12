@@ -4,7 +4,7 @@ import { PokemonCard } from "@/components/pokemon/pokemon-card";
 import { useFilterNotifications } from "@/hooks/use-filter-notifications";
 import { useListControls } from "@/hooks/use-list-controls";
 import { useShinyToggle } from "@/hooks/use-shiny-toggle";
-import { processPokemons } from "@/lib/control-panel/config";
+import { processPokemons } from "@/lib/filters";
 import type { Pokemon } from "@/types/pokemon";
 import { Button } from "@ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";

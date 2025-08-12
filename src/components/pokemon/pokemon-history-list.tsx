@@ -4,7 +4,7 @@ import { YearlyHeatmap } from "@/components/charts/yearly-heatmap";
 import { PokemonCard } from "@/components/pokemon/pokemon-card";
 import { useListControls } from "@/hooks/use-list-controls";
 import { useShinyToggle } from "@/hooks/use-shiny-toggle";
-import { processPokemons } from "@/lib/control-panel/config";
+import { processPokemons } from "@/lib/filters";
 import type { Pokemon } from "@/types/pokemon";
 import { Badge } from "@ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/card";
@@ -89,7 +89,7 @@ export function PokemonHistoryList({ pokemons }: { pokemons: Pokemon[] }) {
 
 	return (
 		<div className="mx-auto max-w-7xl space-y-4">
-			<YearlyHeatmap pokemons={processedPokemon} onDateClick={scrollToDate} />
+			<YearlyHeatmap pokemons={pokemons} onDateClick={scrollToDate} />
 
 			{futureDates.length > 0 && (
 				<Card>

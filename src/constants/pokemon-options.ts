@@ -2,21 +2,25 @@ import { POKEMON_TYPES } from "@/constants/pokemon-type";
 import {
 	POKEMON_CLASSES,
 	POKEMON_FORMS,
-	REGIONS,
 	type PokemonType,
+	REGIONS,
 } from "@/types/pokemon";
 
 // ===== POKEMON CLASS OPTIONS =====
-export const CLASS_OPTIONS = Object.entries(POKEMON_CLASSES).map(([value, label]) => ({
-	value: value as keyof typeof POKEMON_CLASSES,
-	label,
-}));
+export const CLASS_OPTIONS = Object.entries(POKEMON_CLASSES).map(
+	([value, label]) => ({
+		value: value as keyof typeof POKEMON_CLASSES,
+		label,
+	}),
+);
 
 // ===== POKEMON FORM OPTIONS =====
-export const FORM_OPTIONS = Object.entries(POKEMON_FORMS).map(([value, label]) => ({
-	value: value as keyof typeof POKEMON_FORMS,
-	label,
-}));
+export const FORM_OPTIONS = Object.entries(POKEMON_FORMS).map(
+	([value, label]) => ({
+		value: value as keyof typeof POKEMON_FORMS,
+		label,
+	}),
+);
 
 // ===== REGION OPTIONS =====
 export const REGION_OPTIONS = Object.entries(REGIONS).map(([value, label]) => ({
@@ -50,7 +54,11 @@ export const GENERATION_OPTIONS = [
 
 // ===== SORT OPTIONS =====
 export const SORT_OPTIONS: {
-	value: "pokedex-number-asc" | "pokedex-number-desc" | "name-asc" | "name-desc";
+	value:
+		| "pokedex-number-asc"
+		| "pokedex-number-desc"
+		| "name-asc"
+		| "name-desc";
 	label: string;
 }[] = [
 	{ value: "pokedex-number-asc", label: "図鑑番号 (昇順)" },

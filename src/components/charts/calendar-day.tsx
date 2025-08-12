@@ -27,8 +27,7 @@ export function CalendarDayComponent({ day, onDateClick }: CalendarDayProps) {
 		if (count === 0) return 0;
 		if (count <= 2) return 1;
 		if (count <= 5) return 2;
-		if (count <= 10) return 3;
-		return 4;
+		return 3;
 	};
 
 	const intensity = getHeatmapIntensity(totalImplementations);
@@ -41,12 +40,10 @@ export function CalendarDayComponent({ day, onDateClick }: CalendarDayProps) {
 				case 0:
 					return "bg-blue-200 hover:bg-blue-300 dark:bg-blue-800/70 dark:hover:bg-blue-800 border-2 border-blue-500 dark:border-blue-400";
 				case 1:
-					return "bg-green-200 hover:bg-green-300 dark:bg-green-900/50 dark:hover:bg-green-900/70 border-2 border-blue-500 dark:border-blue-400";
-				case 2:
 					return "bg-green-400 hover:bg-green-500 dark:bg-green-700/70 dark:hover:bg-green-700/90 border-2 border-blue-500 dark:border-blue-400";
-				case 3:
+				case 2:
 					return "bg-green-600 hover:bg-green-700 dark:bg-green-600/90 dark:hover:bg-green-600 border-2 border-blue-500 dark:border-blue-400";
-				case 4:
+				case 3:
 					return "bg-green-800 hover:bg-green-900 dark:bg-green-500 dark:hover:bg-green-400 border-2 border-blue-500 dark:border-blue-400";
 				default:
 					return "bg-blue-200 hover:bg-blue-300 dark:bg-blue-800/70 dark:hover:bg-blue-800 border-2 border-blue-500 dark:border-blue-400";
@@ -56,17 +53,15 @@ export function CalendarDayComponent({ day, onDateClick }: CalendarDayProps) {
 		// 通常の日付
 		switch (intensity) {
 			case 0:
-				return "bg-muted/30 hover:bg-muted/50";
+				return "bg-muted";
 			case 1:
-				return "bg-green-200 hover:bg-green-300 dark:bg-green-900/50 dark:hover:bg-green-900/70";
+				return "bg-green-400 dark:bg-green-700/70";
 			case 2:
-				return "bg-green-400 hover:bg-green-500 dark:bg-green-700/70 dark:hover:bg-green-700/90";
+				return "bg-green-600 dark:bg-green-600/90";
 			case 3:
-				return "bg-green-600 hover:bg-green-700 dark:bg-green-600/90 dark:hover:bg-green-600";
-			case 4:
-				return "bg-green-800 hover:bg-green-900 dark:bg-green-500 dark:hover:bg-green-400";
+				return "bg-green-800 dark:bg-green-500";
 			default:
-				return "bg-muted/30 hover:bg-muted/50";
+				return "bg-muted";
 		}
 	};
 
@@ -135,7 +130,7 @@ export function CalendarDayComponent({ day, onDateClick }: CalendarDayProps) {
 			<Tooltip>
 				<TooltipTrigger asChild>
 					<div
-						className={`size-2.5 rounded-sm transition-colors md:h-3 md:w-3 ${heatmapColor} ${
+						className={`size-2.5 rounded-xs transition-colors md:h-3 md:w-3 ${heatmapColor} ${
 							totalImplementations > 0
 								? "cursor-pointer hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
 								: "cursor-default"
