@@ -4,7 +4,6 @@ import {
 	getClassDisplay,
 	getRegionName,
 	getStatName,
-	getTypeColor,
 } from "@/constants/pokemon-display";
 import { getPokemon } from "@/lib/pokemon";
 import type { PokemonApiResponse } from "@/types/pokemon";
@@ -46,16 +45,16 @@ async function PokemonDetailContent({ params }: Props) {
 	try {
 		const response = await fetch(
 			`https://pokeapi.co/api/v2/pokemon/${pokemon.pokedex_number}`,
-			{ 
-				cache: 'force-cache',
-				next: { revalidate: 3600 } // 1時間キャッシュ
-			}
+			{
+				cache: "force-cache",
+				next: { revalidate: 3600 }, // 1時間キャッシュ
+			},
 		);
 		if (response.ok) {
 			pokemonApiData = await response.json();
 		}
 	} catch (error) {
-		console.error('Failed to fetch Pokemon API data:', error);
+		console.error("Failed to fetch Pokemon API data:", error);
 	}
 
 	const { height = 0, weight = 0, stats = [] } = pokemonApiData || {};
@@ -125,7 +124,9 @@ async function PokemonDetailContent({ params }: Props) {
 								<div className="flex items-center gap-2">
 									<Ruler className="h-4 w-4 text-muted-foreground" />
 									<span className="text-sm">身長:</span>
-									<span className="font-medium">{(height / 10).toFixed(1)}m</span>
+									<span className="font-medium">
+										{(height / 10).toFixed(1)}m
+									</span>
 								</div>
 								<div className="flex items-center gap-2">
 									<Weight className="h-4 w-4 text-muted-foreground" />
@@ -148,12 +149,7 @@ async function PokemonDetailContent({ params }: Props) {
 							<p className="font-medium text-sm">タイプ</p>
 							<div className="flex gap-2">
 								{pokemon.pokemon_types.map((type) => (
-									<Badge
-										key={type}
-										className={`text-white ${getTypeColor(type)}`}
-									>
-										{type.toUpperCase()}
-									</Badge>
+									<Badge key={type}>{type.toUpperCase()}</Badge>
 								))}
 							</div>
 						</div>
@@ -236,7 +232,10 @@ async function PokemonDetailContent({ params }: Props) {
 									</span>
 									<span className="font-mono text-sm">{stat.base_stat}</span>
 								</div>
-								<Progress value={(stat.base_stat / 255) * 100} className="h-2" />
+								<Progress
+									value={(stat.base_stat / 255) * 100}
+									className="h-2"
+								/>
 							</div>
 						))}
 					</CardContent>
